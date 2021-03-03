@@ -9,6 +9,7 @@ import apple from './apple'
 import windowslive from './windowslive'
 import linkedin from './linkedin'
 import spotify from './spotify'
+import oauth2 from './oauth2'
 
 const initRoutes = (): Router | undefined => {
   if (AUTH_HAS_ONE_PROVIDER) {
@@ -22,6 +23,7 @@ const initRoutes = (): Router | undefined => {
     windowslive(router)
     linkedin(router)
     spotify(router)
+    oauth2(router)
     return router
   }
 }

@@ -82,11 +82,36 @@ if (castBooleanEnv('WINDOWS_LIVE_ENABLE')) {
 
 // Spotify OAuth2 provider settings
 if (castBooleanEnv('SPOTIFY_ENABLE')) {
-    PROVIDERS.spotify = {
-      clientID: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET
-    }
+  PROVIDERS.spotify = {
+    clientID: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET
   }
+}
+
+// OAuth2 provider settings
+if (castBooleanEnv('OAUTH2_ENABLE')) {
+  PROVIDERS.oauth2 = {
+    clientID: process.env.OAUTH2_CLIENT_ID,
+    clientSecret: process.env.OAUTH2_CLIENT_SECRET,
+    authorizationURL: process.env.OAUTH2_AUTHORIZATION_URL,
+    tokenURL: process.env.OAUTH2_TOKEN_URL,
+    profileURL: process.env.OAUTH2_PROFILE_URL,
+    // comma-separated list of scopes
+    scope: process.env.OAUTH2_SCOPE,
+    // js-function to give instructions on how to assemble the passport-profile-object (id, emails, displayName, photos)
+    // e.g.:
+    /*
+      (data) => {
+        return {
+          id: data.upn,
+          emails: [{value: data.email}],
+          displayName: data.name
+        }
+      }
+    */
+    profileFn: process.env.OAUTH2_PROFILE_FN
+  }
+}
 
 export { PROVIDERS }
 

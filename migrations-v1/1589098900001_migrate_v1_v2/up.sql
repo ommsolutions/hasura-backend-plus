@@ -91,22 +91,22 @@ ALTER TABLE ONLY auth.refresh_tokens
     ADD CONSTRAINT refresh_tokens_account_id_fkey FOREIGN KEY (account_id) REFERENCES auth.accounts(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 INSERT INTO auth.providers (provider)
-    VALUES ('github'), ('facebook'), ('twitter'), ('google'), ('apple'),  ('linkedin'), ('windowslive');
-INSERT INTO auth.roles (role) 
+    VALUES ('github'), ('facebook'), ('twitter'), ('google'), ('apple'),  ('linkedin'), ('windowslive'), ('oauth2');
+INSERT INTO auth.roles (role)
   SELECT role FROM public.roles;
 INSERT INTO auth.accounts (
-    id, 
-    created_at, 
-    updated_at, 
-    user_id, 
+    id,
+    created_at,
+    updated_at,
+    user_id,
     active,
     email,
     password_hash,
     default_role,
     is_anonymous,
     custom_register_data
-  ) 
-  SELECT 
+  )
+  SELECT
     user_accounts.id,
     user_accounts.created_at,
     user_accounts.updated_at,
@@ -117,7 +117,7 @@ INSERT INTO auth.accounts (
     users.default_role,
     users.is_anonymous,
     users.register_data
-  FROM 
+  FROM
     auth.user_accounts AS user_accounts
   JOIN users on users.id = user_accounts.user_id
 ;
@@ -129,7 +129,7 @@ INSERT INTO auth.account_providers (
   auth_provider,
   auth_provider_unique_id
 )
-  SELECT 
+  SELECT
     user_providers.id,
     user_providers.created_at,
     user_providers.updated_at,
@@ -140,8 +140,8 @@ INSERT INTO auth.account_providers (
     auth.user_providers AS user_providers
   JOIN auth.user_accounts AS user_accounts ON user_accounts.user_id = user_providers.user_id
 ;
-INSERT INTO auth.account_roles (id, created_at, account_id, role) 
-  SELECT 
+INSERT INTO auth.account_roles (id, created_at, account_id, role)
+  SELECT
     user_roles.id,
     user_roles.created_at,
     user_accounts.id,
@@ -150,11 +150,11 @@ INSERT INTO auth.account_roles (id, created_at, account_id, role)
    JOIN public.users AS users ON users.id = user_roles.user_id
    JOIN auth.user_accounts AS user_accounts ON user_accounts.user_id = users.id;
 ALTER TABLE users
-  DROP COLUMN active, 
-  DROP COLUMN default_role, 
-  DROP COLUMN email, 
-  DROP COLUMN secret_token, 
-  DROP COLUMN secret_token_expires_at, 
-  DROP COLUMN register_data, 
+  DROP COLUMN active,
+  DROP COLUMN default_role,
+  DROP COLUMN email,
+  DROP COLUMN secret_token,
+  DROP COLUMN secret_token_expires_at,
+  DROP COLUMN register_data,
   DROP COLUMN is_anonymous;
 DROP TABLE public.roles, public.user_roles, auth.auth_providers, auth.user_accounts, auth.user_providers;

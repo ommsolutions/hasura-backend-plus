@@ -30,6 +30,11 @@ interface Constructable<T> {
   prototype: T
 }
 
+export interface HBPProfile extends Profile {
+  roles?: string[]
+  defaultRole?: string
+}
+
 export type TransformProfileFunction = <T extends Profile>(profile: T) => UserData
 interface InitProviderSettings {
   transformProfile: TransformProfileFunction
@@ -43,7 +48,7 @@ const manageProviderStrategy = (
   _req: RequestExtended,
   _accessToken: string,
   _refreshToken: string,
-  profile: Profile,
+  profile: HBPProfile,
   done: VerifyCallback
 ): Promise<void> => {
   // TODO How do we handle REGISTRATION_CUSTOM_FIELDS with OAuth?
@@ -90,14 +95,20 @@ const manageProviderStrategy = (
     // noop continue to register user
   }
 
+  const roles = profile.roles
+    ? profile.roles.map((role) => ({ role }))
+    : DEFAULT_ALLOWED_USER_ROLES.map((role) => ({ role }))
+
+  const defaultRole = profile.defaultRole || DEFAULT_USER_ROLE
+
   // register useruser, account, account_provider
   const account_data = {
     email,
     password_hash: null,
     active: true,
-    default_role: DEFAULT_USER_ROLE,
+    default_role: defaultRole,
     account_roles: {
-      data: DEFAULT_ALLOWED_USER_ROLES.map((role) => ({ role }))
+      data: roles
     },
     user: { data: { display_name: display_name || email, avatar_url } },
     account_providers: {
